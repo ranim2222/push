@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Absence{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <h1 class="mb-4 text-center">Edit Absence</h1>
+
+                {# Insertion du formulaire d'édition d'absence avec un label de bouton mis à jour #}
+                <div class="card p-4 shadow-sm">
+
+                {{ include('absence/_form.html.twig', {'button_label': 'Update'}) }}
+                
+
+                <div class="mt-4 text-center">
+                    <a href="{{ path('app_absence_index') }}" class="btn btn-secondary">Back to list</a>
+                </div>
+
+                {# Insertion du formulaire de suppression de l'absence #}
+                <div class="mt-2 text-center">
+                    {{ include('absence/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

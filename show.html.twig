@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Absence{% endblock %}
+
+{% block body %}
+    <h1>Absence</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Date</th>
+                <td>{{ absence.Date ? absence.Date|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Nbr_abs</th>
+                <td>{{ absence.nbrAbs }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ absence.type }}</td>
+            </tr>
+            <tr>
+                <th>ID_abs</th>
+                <td>{{ absence.IDAbs }}</td>
+            </tr>
+            <tr>
+                <th>Cin</th>
+                <td>{{ absence.cin }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>
+                   {% if absence.image_path %}
+    <img src="{{ asset('uploads/' ~ absence.image_path) }}" alt="Absence Image" class="img-fluid">
+    <br>
+    <small>Path: {{ asset('uploads/' ~ absence.image_path) }}</small>
+{% else %}
+    Aucune image disponible
+{% endif %}
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_absence_index') }}">Back to list</a>
+
+    <a href="{{ path('app_absence_edit', {'ID_abs': absence.IDAbs}) }}">Edit</a>
+
+    {{ include('absence/_delete_form.html.twig') }}
+{% endblock %}

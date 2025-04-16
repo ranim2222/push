@@ -1,0 +1,64 @@
+{# chatbot.html.twig #}
+{% extends 'frontOffice/front_base.html.twig' %}
+
+
+{% block title %}Consultation des absences et pénalités{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Consulter les informations concernant vos absences et pénalités</h1>
+
+        {# Affichage du message, si présent #}
+        {% if message is defined and message is not null %}
+            <div class="alert alert-info mb-4">{{ message }}</div>
+        {% endif %}
+
+        {# Première étape : formulaire pour le CIN #}
+        {% if cin is not defined %}
+            <div class="card p-4 mb-4">
+                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                    <div class="form-group">
+                        {{ form_label(form.cin, 'Numéro CIN', {'label_attr': {'class': 'control-label'}}) }}
+                        {{ form_widget(form.cin, {'attr': {'class': 'form-control', 'autocomplete': 'off'}}) }}
+
+                        {{ form_errors(form.cin) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                {{ form_end(form) }}
+            </div>
+        
+        {# Deuxième étape : choix de consultation #}
+        {% else %}
+            <div class="card p-4">
+                <p class="mb-4">Vous avez saisi le CIN : <strong>{{ cin }}</strong>.</p>
+                
+                <h2 class="mb-3">Que voulez-vous savoir ?</h2>
+                
+                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                    <div class="form-group">
+                        {% for choice in form.choix %}
+                            <div class="radio">
+                                <label>
+                                    {{ form_widget(choice) }}
+                                    {{ choice.vars.label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                        {{ form_errors(form.choix) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                {{ form_end(form) }}
+            </div>
+        {% endif %}
+        
+        {# Ajouter un script JavaScript pour la redirection après 3 secondes si le message contient "À bientôt" #}
+        {% if message is defined and 'À bientôt' in message %}
+            <script>
+                setTimeout(function() {
+                    window.location.href = '{{ path('chatbot') }}'; // Redirection vers la page du CIN
+                }, 3000); // 5000 ms = 5 secondes
+            </script>
+        {% endif %}
+        
+    </div>
+{% endblock %}
