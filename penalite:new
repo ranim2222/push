@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Créer une nouvelle pénalité</h1>
+
+        {# Affichage des messages de flash si existants #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        icon: '{{ label == 'success' ? 'info' : 'error' }}',  {# Utiliser 'info' pour succès (bleu) #}
+                        title: '{{ label == 'success' ? 'Succès' : 'Erreur' }}',
+                        text: '{{ message }}',
+                        showConfirmButton: true
+                    });
+                </script>
+            {% endfor %}
+        {% endfor %}
+
+        {# Formulaire de pénalité #}
+        <div class="card p-4 shadow-sm">
+            {{ form_start(form, { 'attr': {'novalidate': 'novalidate'} }) }} {# Désactive toute la validation HTML #}
+
+            <div class="form-group mb-3">
+                {{ form_label(form.type, 'Type de pénalité', {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.type) }}
+            </div>
+
+            <div class="form-group mb-3">
+                {{ form_label(form.cin, 'Numéro CIN', {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.cin) }}
+            </div>
+
+            <div class="form-group mb-3">
+                {{ form_label(form.seuil_abs, 'Seuil de pénalité', {'attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.seuil_abs, {'attr': {'class': 'form-control',  'autocomplete': 'off'}}) }}
+                {{ form_errors(form.seuil_abs) }}
+            </div>
+
+            <button class="btn btn-primary w-100">Enregistrer</button>
+
+            {{ form_end(form) }}
+        </div>
+
+        {# Lien vers la liste des pénalités après ajout #}
+        <div class="mt-4 text-center">
+            <a href="{{ path('app_penalite_index') }}" class="btn btn-secondary">Retour à la liste des pénalités</a>
+        </div>
+
+        {# Lien vers la liste des absences #}
+        <div class="mt-2 text-center">
+            <a href="{{ path('app_absence_new') }}" class="btn btn-secondary">Retour aux absences</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: '{{ label == 'success' ? 'info' : 'error' }}',  {# Utiliser 'info' pour succès (bleu) #}
+                    title: '{{ label == 'success' ? 'Succès' : 'Erreur' }}',
+                    text: '{{ message }}',
+                    showConfirmButton: true
+                });
+            {% endfor %}
+        {% endfor %}
+    </script>
+
+<script>
+    // Sélectionner le champ CIN et seuil_abs
+    const cinField = document.getElementById('penalite_cin');
+    const seuilAbsField = document.getElementById('penalite_seuil_abs');
+
+    if (cinField && seuilAbsField) {
+        cinField.addEventListener('change', function () {
+            const cinValue = cinField.value;
+
+            if (cinValue) {
+                fetch(`/penalite/nbr_abs/${cinValue}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const nbrAbs = data.nbr_abs;
+                        const seuilArrondi = Math.floor(nbrAbs / 2);
+                        seuilAbsField.value = seuilArrondi;
+                    })
+                    .catch(error => console.error('Erreur:', error));
+            }
+        });
+    }
+</script>
+{% endblock %}
